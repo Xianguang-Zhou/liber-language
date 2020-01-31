@@ -1,4 +1,4 @@
-import lazy_pattern as re
+from . import lazy_pattern as re
 import logging
 
 
