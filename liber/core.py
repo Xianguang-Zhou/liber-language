@@ -1,4 +1,4 @@
-import re
+import lazy_pattern as re
 import logging
 
 
@@ -7,7 +7,7 @@ import logging
         '類型': '函數調用',
         '子樹': {
             '參數表': {
-                '(?P<a>(((?<=").*?(?="))|(((?<= )|(?<=^))([^" ]+?)(?=( |$)))))': None
+                re.LazyPattern('(?P<a>(((?<=").*?(?="))|(((?<= )|(?<=^))([^" ]+?)(?=( |$)))))'): None
             }
         }
     },
@@ -49,9 +49,15 @@ import logging
 }
 
 
+正則組 = re.toPatternDict(正則組)
+續行組 = re.toPatternSet(續行組)
+錯誤組 = re.toPatternDict(錯誤組)
+nonBlankPattern = re.LazyPattern('\\S')
+
+
 class parse_error(Exception):
     pass
-    
+
 
 def 遞歸re(s, start=正則組):
     d = []
@@ -84,7 +90,7 @@ def 行組解析(行組):
     全 = []
     多行緩衝 = ''
     for 當前行 in iter(行組):
-        if not re.search('\\S', 當前行):
+        if not re.search(nonBlankPattern, 當前行):
             if 全:
                 全[-1]['之後的空白'] = 全[-1].get('之後的空白', 0) + 1
             continue
